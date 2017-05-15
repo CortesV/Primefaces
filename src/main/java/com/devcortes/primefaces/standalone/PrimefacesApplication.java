@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan
 @SpringBootApplication
+@ComponentScan({ "com.devcortes.primefaces" })
 public class PrimefacesApplication{
 
 	public static void main(String[] args) {

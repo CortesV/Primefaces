@@ -28,6 +28,13 @@ dependencies {
 	compile group: 'javax.faces', name: 'jsf-api', version: '2.1'
 	compile group: 'com.sun.faces', name: 'jsf-impl', version: '2.2.14'
 	
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.5.3.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.3.RELEASE'
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.10.Final'
+	compile group: 'org.hibernate', name: 'hibernate-envers', version: '5.2.10.Final'
+	compile group: 'com.h2database', name: 'h2', version: '1.4.195'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+	
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.3.RELEASE'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
