@@ -18,7 +18,7 @@ public class CarDao implements ICar {
 
 	private static final Logger LOGGER = Logger.getLogger(CarDao.class);
 	private final static String SQL_GET_CARS = "SELECT * FROM car LIMIT ? OFFSET ?";
-	
+
 	@Autowired
 	HibernateUtil hibernateUtil;
 
@@ -47,7 +47,8 @@ public class CarDao implements ICar {
 		try (Session session = hibernateUtil.getSessionFactory().openSession()) {
 
 			session.beginTransaction();
-			List<Car> result = session.createNativeQuery(SQL_GET_CARS).setParameter(1, limit).setParameter(2, (batch - 1) * limit).getResultList();
+			List<Car> result = session.createNativeQuery(SQL_GET_CARS).setParameter(1, limit)
+					.setParameter(2, (batch - 1) * limit).getResultList();
 			session.getTransaction().commit();
 			return result;
 
