@@ -48,5 +48,11 @@ public class CarController {
 
 		carService.deleteCar(id);
 	}
+	
+	@RequestMapping(value = "/hello", method = RequestMethod.GET, produces = "application/json")
+	public String hello() {
+
+		return "Hello rest";
+	}
 
 }
