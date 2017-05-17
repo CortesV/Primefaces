@@ -1,4 +1,9 @@
-package com.devcortes.primefaces.jsf;
+package com.devcortes.primefaces.jsf.charts;
+
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
 
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -9,34 +14,27 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@ManagedBean
 @Scope("view")
-public class JsfController {
+public class ChartAreaController implements Serializable {
 
-	int counter = 0;
-
-	private String jsfTestString = "This string came from server side     ";
-
-	/**
-	 * This method demonstrates grabbing a vlue from the view scope and the
-	 * session scope.
-	 * 
-	 * Something I wanted to see to verify the same Spring context is managing
-	 * each scope.
-	 */
-	public void doSomething() {
-		setJsfTestString("Counter " + counter++ + "     ");
-	}
+	private static final long serialVersionUID = 1L;
 
 	private LineChartModel areaModel;
 
+	@PostConstruct
+	public void init() {
+		
+		createAreaModel();
+	}
+
 	public LineChartModel getAreaModel() {
-		if (areaModel == null) {
-			createAreaModel();
-		}
+		
 		return areaModel;
 	}
 
 	private void createAreaModel() {
+		
 		areaModel = new LineChartModel();
 
 		LineChartSeries boys = new LineChartSeries();
@@ -71,14 +69,6 @@ public class JsfController {
 		yAxis.setLabel("Births");
 		yAxis.setMin(0);
 		yAxis.setMax(300);
-	}
-
-	public String getJsfTestString() {
-		return jsfTestString;
-	}
-
-	public void setJsfTestString(String jsfTestString) {
-		this.jsfTestString = jsfTestString;
 	}
 
 }
