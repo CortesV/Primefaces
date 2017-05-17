@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>User Page</title>
+</h:head>
+<h:body style="padding:20px">
+
+	<p:chart type="line" model="#{chartAreaController.areaModel}"
+		style="margin: auto; height:300px; width: 600px;" />
+
+
+	<p:chart type="line" model="#{chartZoomController.zoomModel}"
+		style="height:300px;" widgetVar="chart" />
+	<p:commandButton type="button" value="Reset" icon="ui-icon-cancel"
+		onclick="PF('chart').resetZoom()" />
+
+
+	<h3>JFreeChart rendered as DataURI / ViewScoped support</h3>
+	<p:graphicImage value="#{chartGraphicImageController.chart}"
+		stream="false" />
+
+	<h:panelGrid columns="2" columnClasses="left,right" style="width:100%">
+		<p:chart type="line" model="#{chartDynamicImageController.animatedModel1}"
+			style="width:400px;" />
+		<p:chart type="bar" model="#{chartDynamicImageController.animatedModel2}"
+			style="width:400px;" />
+		
+	</h:panelGrid>
+
+</h:body>
+</html>
