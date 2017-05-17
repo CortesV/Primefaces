@@ -1,4 +1,4 @@
-package com.devcortes.primefaces.jsf;
+package com.devcortes.primefaces.scope;
 
 import java.util.Map;
 

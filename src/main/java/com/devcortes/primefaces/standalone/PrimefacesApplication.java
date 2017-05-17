@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.devcortes.primefaces.jsf.ViewScope;
+import com.devcortes.primefaces.scope.ViewScope;
 import com.sun.faces.config.ConfigureListener;
 
 @Configuration
