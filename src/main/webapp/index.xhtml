@@ -8,15 +8,13 @@
 	<title>User Page</title>
 </h:head>
 <h:body style="padding:20px">
-	<h:form id="test">
-		<h:outputLabel value="#{jsfController.jsfTestString}"></h:outputLabel>
-		<p:commandButton value="Ajax Submit" id="ajax" update="@form"
-			actionListener="#{jsfController.doSomething()}"
-			styleClass="ui-priority-primary" />
-	</h:form>
-	<div width="100%">
-		<p:chart type="line" model="#{jsfController.areaModel}"
-			style="height:300px; width: 600px;" />
-	</div>
+	
+
+	<p:outputLabel value="Enter Employee Hire Date:"></p:outputLabel>
+	<p:chart type="line" model="#{chartZoomController.zoomModel}"
+		style="height:300px;" widgetVar="chart" />
+
+	<p:commandButton type="button" value="Reset" icon="ui-icon-cancel"
+		onclick="PF('chart').resetZoom()" />
 </h:body>
 </html>

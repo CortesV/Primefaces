@@ -23,6 +23,8 @@ repositories {
 
 dependencies {
 
+	compile group: 'org.jfree', name: 'jfreechart', version: '1.0.19'
+
 	compile group: 'org.primefaces', name: 'primefaces', version: '6.1'
 	compile group: 'com.sun.faces', name: 'jsf-api', version: '2.2.14'
 	compile group: 'com.sun.faces', name: 'jsf-impl', version: '2.2.14'
