@@ -15,5 +15,7 @@ public interface ICar {
 	public void updateCar(Integer id, Car car);
 
 	public void deleteCar(Integer id);
+	
+	public void generateCars();
 
 }

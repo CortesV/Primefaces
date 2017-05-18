@@ -38,4 +38,9 @@ public class CarService {
 
 		iCar.deleteCar(id);
 	}
+
+	public void generateCars() {
+
+		iCar.generateCars();
+	}
 }
