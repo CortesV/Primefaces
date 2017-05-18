@@ -20,6 +20,8 @@ public class Car implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	private String uuid;
+
 	@Column(name = "year_produce")
 	private Integer yearProduce;
 
@@ -29,16 +31,20 @@ public class Car implements Serializable {
 
 	private String color;
 
+	private Integer price;
+
 	public Car() {
 
 	}
 
-	public Car(Integer yearProduce, String brand, String model, String color) {
+	public Car(String uuid, Integer yearProduce, String brand, String model, String color, Integer price) {
 
+		this.uuid = uuid;
 		this.yearProduce = yearProduce;
 		this.brand = brand;
 		this.model = model;
 		this.color = color;
+		this.price = price;
 	}
 
 	public Integer getId() {
@@ -47,6 +53,14 @@ public class Car implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public Integer getYearProduce() {
@@ -87,6 +101,14 @@ public class Car implements Serializable {
 		this.brand = brand;
 		this.model = model;
 		this.color = color;
+	}
+
+	public Integer getPrice() {
+		return price;
+	}
+
+	public void setPrice(Integer price) {
+		this.price = price;
 	}
 
 }
