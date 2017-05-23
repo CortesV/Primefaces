@@ -13,7 +13,7 @@
 
 	<h:form id="form">
 		<p:dataTable var="car" value="#{lazyController.lazyModel}"
-			paginator="true" rows="5"
+			paginator="true" rows="15"
 			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 			rowsPerPageTemplate="5,10,15"
 			selection="#{lazyController.selectedCars}" id="carTable" lazy="true"
