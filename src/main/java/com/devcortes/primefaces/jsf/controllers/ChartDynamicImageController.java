@@ -1,4 +1,4 @@
-package com.devcortes.primefaces.jsf.charts;
+package com.devcortes.primefaces.jsf.controllers;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
