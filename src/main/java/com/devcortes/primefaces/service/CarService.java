@@ -43,4 +43,15 @@ public class CarService {
 
 		iCar.generateCars();
 	}
+
+	public List<Car> load(int first, int pageSize, String sortField, boolean asc){
+		
+		return iCar.load(first, pageSize, sortField, asc);
+	}
+
+	public Long getTotalRegistors(){
+		
+		return iCar.getTotalRegistors();
+	}
+
 }
