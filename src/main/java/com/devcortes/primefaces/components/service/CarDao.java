@@ -205,25 +205,6 @@ public class CarDao implements ICar {
 
 			session.beginTransaction();
 
-			/*
-			 * CriteriaBuilder builder = session.getCriteriaBuilder();
-			 * CriteriaQuery<Car> criteria = builder.createQuery(Car.class);
-			 * Root<Car> contactRoot = criteria.from(Car.class);
-			 * criteria.select(contactRoot); TypedQuery<Car> typedQuery =
-			 * session.createQuery(criteria); typedQuery.setFirstResult(first);
-			 * typedQuery.setMaxResults(pageSize);
-			 * 
-			 * if (sortField != null) {
-			 * 
-			 * if (asc) {
-			 * 
-			 * criteria.orderBy(builder.asc(contactRoot.get(sortField))); } else
-			 * {
-			 * 
-			 * criteria.orderBy(builder.desc(contactRoot.get(sortField))); } }
-			 * return typedQuery.getResultList();
-			 */
-
 			Criteria criteria = session.createCriteria(Car.class);
 			criteria.setFirstResult(first);
 			criteria.setMaxResults(pageSize);
