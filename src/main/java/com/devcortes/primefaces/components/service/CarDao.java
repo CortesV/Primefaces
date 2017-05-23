@@ -4,8 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,12 +24,13 @@ import com.devcortes.primefaces.components.entity.Car;
 import com.devcortes.primefaces.components.interfaces.ICar;
 import com.devcortes.primefaces.service.HibernateUtil;
 
+
 @Repository
 public class CarDao implements ICar {
 
 	private static final Logger LOGGER = Logger.getLogger(CarDao.class);
 
-	private final static String SQL_GET_CARS = "SELECT * FROM car LIMIT ? OFFSET ?";
+	private final static String SQL_GET_CARS = "select car from Car car";
 
 	private final static String[] colors;
 
@@ -79,10 +90,10 @@ public class CarDao implements ICar {
 		try (Session session = hibernateUtil.getSessionFactory().openSession()) {
 
 			session.beginTransaction();
-			List<Car> result = session.createNativeQuery(SQL_GET_CARS).setParameter(1, limit)
-					.setParameter(2, (batch - 1) * limit).getResultList();
+			List<Car> query = session.createQuery(SQL_GET_CARS).setMaxResults(limit).setFirstResult((batch - 1) * limit)
+					.list();
 			session.getTransaction().commit();
-			return result;
+			return query;
 
 		} catch (Exception e) {
 
@@ -186,5 +197,78 @@ public class CarDao implements ICar {
 
 	private int getRandomPrice() {
 		return (int) (Math.random() * 100000);
+	}
+
+	@Override
+	public List<Car> load(int first, int pageSize, String sortField, boolean asc) {
+
+		try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+
+			session.beginTransaction();
+
+			/*CriteriaBuilder builder = session.getCriteriaBuilder();
+			CriteriaQuery<Car> criteria = builder.createQuery(Car.class);
+			Root<Car> contactRoot = criteria.from(Car.class);
+			criteria.select(contactRoot);
+			TypedQuery<Car> typedQuery = session.createQuery(criteria);
+			typedQuery.setFirstResult(first);
+			typedQuery.setMaxResults(pageSize);
+
+			if (sortField != null) {
+
+				if (asc) {
+
+					criteria.orderBy(builder.asc(contactRoot.get(sortField)));
+				} else {
+
+					criteria.orderBy(builder.desc(contactRoot.get(sortField)));
+				}
+			}
+			return typedQuery.getResultList();*/
+
+			Criteria criteria = session.createCriteria(Car.class);
+			criteria.setFirstResult(first);
+			criteria.setMaxResults(pageSize);
+			if (sortField != null) {
+
+				if (asc) {
+
+					criteria.addOrder(Order.asc(sortField));
+				} else {
+
+					criteria.addOrder(Order.desc(sortField));
+				}
+			}
+			
+			session.getTransaction().commit();
+			return criteria.list();
+
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public Long getTotalRegistors() {
+
+		try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+
+			session.beginTransaction();
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+			CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+			criteria.select(builder.count(criteria.from(Car.class)));
+
+			session.getTransaction().commit();
+
+			return session.createQuery(criteria).getSingleResult();
+
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
 	}
 }
