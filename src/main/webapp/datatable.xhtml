@@ -3,7 +3,9 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:jsf="http://xmlns.jcp.org/jsf"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
 <h:head>
 	<title>User Page</title>
 </h:head>
@@ -11,19 +13,22 @@
 
 	<h:form id="form">
 		<p:dataTable var="car" value="#{lazyController.lazyModel}"
-			paginator="true" rows="5"
+			paginator="true" rows="15"
 			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-			rowsPerPageTemplate="5,10,15" selectionMode="single"
-			selection="#{lazyController.selectedCar}" id="carTable" lazy="true" paginatorPosition="bottom">
-			
-			<p:ajax event="rowSelect" listener="#{lazyController.onRowSelect}"
-				update=":form:carDetail" oncomplete="PF('carDialog').show()" />
-			
+			rowsPerPageTemplate="5,10,15"
+			selection="#{lazyController.selectedCars}" id="carTable" lazy="true"
+			paginatorPosition="bottom" rowKey="#{car.uuid}"
+			style="margin-bottom:0">
+
+			<p:column selectionMode="multiple"
+				style="width:16px;text-align:center" />
+
 			<p:column headerText="Id" sortBy="#{car.id}" filterBy="#{car.id}">
 				<h:outputText value="#{car.id}" />
 			</p:column>
 
-			<p:column headerText="UUID" sortBy="#{car.uuid}" filterBy="#{car.uuid}">
+			<p:column headerText="UUID" sortBy="#{car.uuid}"
+				filterBy="#{car.uuid}">
 				<h:outputText value="#{car.uuid}" />
 			</p:column>
 
@@ -52,40 +57,60 @@
 				<h:outputText value="#{car.price}" />
 			</p:column>
 
+			<f:facet name="footer">
+				<p:commandButton process="carTable" update=":form:multiCarDetail"
+					icon="ui-icon-search" value="View many cars"
+					oncomplete="PF('multiCarDialog').show()" />
+				<p:commandButton process="carTable" update=":form:carDetail"
+					icon="ui-icon-search" value="View single car"
+					oncomplete="PF('carDialog').show()" />
+			</f:facet>
 		</p:dataTable>
 
 		<p:dialog header="Car Detail" widgetVar="carDialog" modal="true"
 			showEffect="fade" hideEffect="fade" resizable="false">
 			<p:outputPanel id="carDetail" style="text-align:center;">
-				<p:panelGrid columns="2"
-					rendered="#{not empty lazyController.selectedCar}"
-					columnClasses="label,value">
+				<ui:repeat value="#{lazyController.selectedCars}" var="cars">
+					<p:panelGrid columns="2"
+						rendered="#{not empty lazyController.selectedCars}"
+						columnClasses="label,value">
 
-					<h:outputText value="ID:" />
-					<h:outputText value="#{lazyController.selectedCar.id}" />
+						<h:outputText value="Id:" />
+						<h:outputText value="#{cars.id}" />
 
-					<h:outputText value="UUID:" />
-					<h:outputText value="#{lazyController.selectedCar.uuid}" />
+						<h:outputText value="UUID:" />
+						<h:outputText value="#{cars.uuid}" />
 
-					<h:outputText value="Year" />
-					<h:outputText value="#{lazyController.selectedCar.yearProduce}" />
+						<h:outputText value="Year" />
+						<h:outputText value="#{cars.yearProduce}" />
 
-					<h:outputText value="Brand" />
-					<h:outputText value="#{lazyController.selectedCar.brand}" />
+						<h:outputText value="Brand" />
+						<h:outputText value="#{cars.brand}" />
 
-					<h:outputText value="Model" />
-					<h:outputText value="#{lazyController.selectedCar.model}" />
+						<h:outputText value="Model" />
+						<h:outputText value="#{cars.model}" />
 
-					<h:outputText value="Color:" />
-					<h:outputText value="#{lazyController.selectedCar.color}"
-						style="color:#{lazyController.selectedCar.color}" />
+						<h:outputText value="Color:" />
+						<h:outputText value="#{cars.color}" style="color:#{cars.color}" />
 
-					<h:outputText value="Price:" />
-					<h:outputText value="#{lazyController.selectedCar.price}">
-						<f:convertNumber type="currency" currencySymbol="$" />
-					</h:outputText>
+						<h:outputText value="Price:" />
+						<h:outputText value="#{cars.price}">
+							<f:convertNumber type="currency" currencySymbol="$" />
+						</h:outputText>
 
-				</p:panelGrid>
+					</p:panelGrid>
+				</ui:repeat>
+			</p:outputPanel>
+		</p:dialog>
+
+		<p:dialog header="Selected Cars" widgetVar="multiCarDialog"
+			modal="true" showEffect="fade" hideEffect="fade" resizable="false"
+			width="200">
+			<p:outputPanel id="multiCarDetail" style="text-align:center;">
+				<ui:repeat value="#{lazyController.selectedCars}" var="cars">
+					<h:outputText value="#{cars.id} - #{cars.brand}"
+						style="display:block" />
+				</ui:repeat>
 			</p:outputPanel>
 		</p:dialog>
 	</h:form>
@@ -94,9 +119,10 @@
 
 
 
-	
 
-	
-	
+
+
+
+
 </h:body>
 </html>

@@ -24,7 +24,6 @@ import com.devcortes.primefaces.components.entity.Car;
 import com.devcortes.primefaces.components.interfaces.ICar;
 import com.devcortes.primefaces.service.HibernateUtil;
 
-
 @Repository
 public class CarDao implements ICar {
 
@@ -206,25 +205,24 @@ public class CarDao implements ICar {
 
 			session.beginTransaction();
 
-			/*CriteriaBuilder builder = session.getCriteriaBuilder();
-			CriteriaQuery<Car> criteria = builder.createQuery(Car.class);
-			Root<Car> contactRoot = criteria.from(Car.class);
-			criteria.select(contactRoot);
-			TypedQuery<Car> typedQuery = session.createQuery(criteria);
-			typedQuery.setFirstResult(first);
-			typedQuery.setMaxResults(pageSize);
-
-			if (sortField != null) {
-
-				if (asc) {
-
-					criteria.orderBy(builder.asc(contactRoot.get(sortField)));
-				} else {
-
-					criteria.orderBy(builder.desc(contactRoot.get(sortField)));
-				}
-			}
-			return typedQuery.getResultList();*/
+			/*
+			 * CriteriaBuilder builder = session.getCriteriaBuilder();
+			 * CriteriaQuery<Car> criteria = builder.createQuery(Car.class);
+			 * Root<Car> contactRoot = criteria.from(Car.class);
+			 * criteria.select(contactRoot); TypedQuery<Car> typedQuery =
+			 * session.createQuery(criteria); typedQuery.setFirstResult(first);
+			 * typedQuery.setMaxResults(pageSize);
+			 * 
+			 * if (sortField != null) {
+			 * 
+			 * if (asc) {
+			 * 
+			 * criteria.orderBy(builder.asc(contactRoot.get(sortField))); } else
+			 * {
+			 * 
+			 * criteria.orderBy(builder.desc(contactRoot.get(sortField))); } }
+			 * return typedQuery.getResultList();
+			 */
 
 			Criteria criteria = session.createCriteria(Car.class);
 			criteria.setFirstResult(first);
@@ -239,7 +237,7 @@ public class CarDao implements ICar {
 					criteria.addOrder(Order.desc(sortField));
 				}
 			}
-			
+
 			session.getTransaction().commit();
 			return criteria.list();
 
