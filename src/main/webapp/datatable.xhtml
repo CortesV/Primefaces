@@ -20,6 +20,9 @@
 			paginatorPosition="bottom" rowKey="#{car.uuid}"
 			style="margin-bottom:0">
 
+			<p:ajax event="rowSelectCheckbox" listener="#{lazyController.mark}" />
+			<p:ajax event="rowUnselectCheckbox" listener="#{lazyController.mark}" />
+
 			<p:column selectionMode="multiple"
 				style="width:16px;text-align:center" />
 
@@ -64,6 +67,12 @@
 				<p:commandButton process="carTable" update=":form:carDetail"
 					icon="ui-icon-search" value="View single car"
 					oncomplete="PF('carDialog').show()" />
+				<p:commandButton process="carTable" update="carTable"
+					actionListener="#{lazyController.select}" icon="ui-icon-check"
+					value="Select all" />
+				<p:commandButton process="carTable" update="carTable"
+					actionListener="#{lazyController.mark}" icon="ui-icon-check"
+					value="End" />
 			</f:facet>
 		</p:dataTable>
 

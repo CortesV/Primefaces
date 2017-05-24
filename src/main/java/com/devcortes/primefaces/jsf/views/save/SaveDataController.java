@@ -1,4 +1,4 @@
-package com.devcortes.primefaces.jsf.data;
+package com.devcortes.primefaces.jsf.views.save;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
