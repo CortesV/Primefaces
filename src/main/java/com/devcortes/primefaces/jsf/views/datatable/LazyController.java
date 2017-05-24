@@ -1,20 +1,23 @@
-package com.devcortes.primefaces.jsf.controllers;
+package com.devcortes.primefaces.jsf.views.datatable;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -23,25 +26,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.devcortes.primefaces.components.entity.Car;
+import com.devcortes.primefaces.components.service.CarDao;
 import com.devcortes.primefaces.service.CarService;
 
 @RestController
-// @ViewScoped
-@SessionScoped
+@ViewScoped
 public class LazyController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(LazyController.class);
 
 	@ManagedProperty("#{carService}")
 	@Autowired
-	private CarService carService;
+	private transient CarService carService;
 
 	private LazyDataModel<Car> lazyModel;
-
 	private List<Car> datasource;
-
 	private Car selectedCar;
 	private List<Car> selectedCars;
+	private Set<Car> markedCars;
+	private boolean markedFlag;
+
+	public LazyController() {
+
+		markedCars = new HashSet<>();
+		markedFlag = false;
+	}
 
 	@PostConstruct
 	public void init() {
@@ -57,7 +67,36 @@ public class LazyController implements Serializable {
 				setRowCount(carService.getTotalRegistors().intValue());
 				datasource = carService.load(first, pageSize, sortField, SortOrder.ASCENDING.equals(sortOrder));
 
-				return filter(first, pageSize, filters);
+				datasource = filter(first, pageSize, filters);
+
+				if (markedFlag) {
+					markedCars.addAll(datasource);
+					
+					
+					
+					
+					
+					for (Car car : datasource) {
+
+						for (Car sCar : markedCars) {
+
+							if (car.getId().equals(sCar.getId())) {
+								selectedCars.add(car);
+							}
+						}
+					}
+				} else {
+					for (Car car : datasource) {
+
+						for (Car sCar : markedCars) {
+
+							if (car.getId().equals(sCar.getId())) {
+								selectedCars.add(car);
+							}
+						}
+					}
+				}
+				return datasource;
 
 			}
 
@@ -164,6 +203,25 @@ public class LazyController implements Serializable {
 	public void onRowUnselect(UnselectEvent event) {
 		FacesMessage msg = new FacesMessage("Car Unselected", ((Car) event.getObject()).getUuid());
 		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	public void select() {
+
+		selectedCars = new ArrayList<>(datasource);
+		markedCars.addAll(datasource);
+		markedFlag = true;
+	}
+
+	public void mark() {
+
+		if (markedFlag) {
+			markedCars.removeAll(selectedCars);
+			LOGGER.info("Mark is removed");
+		} else {
+			markedCars.addAll(selectedCars);
+			LOGGER.info("Mark is put");
+		}
+
 	}
 
 }

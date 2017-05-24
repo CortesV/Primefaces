@@ -1,4 +1,4 @@
-package com.devcortes.primefaces.jsf.controllers;
+package com.devcortes.primefaces.jsf.views.charts;
 
 import java.io.Serializable;
 
