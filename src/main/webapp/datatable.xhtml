@@ -13,15 +13,17 @@
 
 	<h:form id="form">
 		<p:dataTable var="car" value="#{lazyController.lazyModel}"
-			paginator="true" rows="15"
+			paginator="true" rows="5"
 			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 			rowsPerPageTemplate="5,10,15"
 			selection="#{lazyController.selectedCars}" id="carTable" lazy="true"
 			paginatorPosition="bottom" rowKey="#{car.uuid}"
 			style="margin-bottom:0">
 
+
 			<p:ajax event="rowSelectCheckbox" listener="#{lazyController.mark}" />
-			<p:ajax event="rowUnselectCheckbox" listener="#{lazyController.mark}" />
+			<p:ajax event="rowUnselectCheckbox" listener="#{lazyController.unMark}" />
+			<p:ajax event="toggleSelect" listener="#{lazyController.mark}" />
 
 			<p:column selectionMode="multiple"
 				style="width:16px;text-align:center" />
@@ -71,8 +73,8 @@
 					actionListener="#{lazyController.select}" icon="ui-icon-check"
 					value="Select all" />
 				<p:commandButton process="carTable" update="carTable"
-					actionListener="#{lazyController.mark}" icon="ui-icon-check"
-					value="End" />
+					actionListener="#{lazyController.deSelect}" icon="ui-icon-check"
+					value="Unselect all" />
 			</f:facet>
 		</p:dataTable>
 
@@ -123,6 +125,7 @@
 			</p:outputPanel>
 		</p:dialog>
 	</h:form>
+
 
 
 

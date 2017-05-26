@@ -111,4 +111,22 @@ public class Car implements Serializable {
 		this.price = price;
 	}
 
+	/*@Override
+	public boolean equals(Object obj) {
+
+		if (obj == this) {
+			return true;
+		}
+
+		if (!(obj instanceof Car)) {
+			return false;
+		}
+
+		Car other = (Car) obj;
+
+		return id == other.getId() && uuid == other.getUuid() && yearProduce == other.getYearProduce()
+				&& brand == other.getBrand() && model == other.getModel() && color == other.getColor()
+				&& price == other.getPrice();
+	}*/
+
 }
