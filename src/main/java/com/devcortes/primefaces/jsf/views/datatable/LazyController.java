@@ -3,10 +3,12 @@ package com.devcortes.primefaces.jsf.views.datatable;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -39,13 +41,15 @@ public class LazyController implements Serializable {
 	private LazyDataModel<Car> lazyModel;
 	private List<Car> datasource;
 	private List<Car> selectedCars;
-	private List<Car> markedCars;
-	private List<Car> notMarkedCars;
-	private boolean markedFlag;
+	private Set<Car> selectedCarsHelp;
+	private Set<Car> markedCars;
+	private Set<Car> notMarkedCars;
+	private boolean selectAllFlag;
 
 	public LazyController() {
-		markedCars = new ArrayList<>();
-		notMarkedCars = new ArrayList<>();
+		markedCars = new HashSet<>();
+		notMarkedCars = new HashSet<>();
+		selectedCarsHelp = new HashSet<>();
 		selectedCars = new ArrayList<>();
 	}
 
@@ -60,16 +64,35 @@ public class LazyController implements Serializable {
 			public List<Car> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 
-				setRowCount(carService.getTotalRegistors().intValue());
-				datasource = carService.load(first, pageSize, sortField, SortOrder.ASCENDING.equals(sortOrder));
+				setRowCount(carService.getTotalRegistors().intValue());				
+				int page = carService.getTotalRegistors().intValue()/pageSize - (carService.getTotalRegistors().intValue() - (first + pageSize))/pageSize;
+				datasource = carService.load(pageSize, page, sortField, SortOrder.ASCENDING.equals(sortOrder));
 				datasource = filter(first, pageSize, filters);
-				/*
-				 * markedCars = viewData(); for (int i = 0; i <
-				 * datasource.size(); i++) { for (int j = 0; j <
-				 * markedCars.size(); j++) { if
-				 * (datasource.get(i).getId().equals(markedCars.get(j).getId()))
-				 * { selectedCars.add(datasource.get(i)); } } }
-				 */
+
+				Set<Car> localCars = new HashSet<>(datasource);
+				Set<Car> localSelectedCars = new HashSet<>();
+				if (selectAllFlag) {
+					selectedCars = datasource;
+					selectedCarsHelp = new HashSet<>(datasource);
+					
+					
+					for (Car markCar : localCars) {
+						if (!notMarkedCars.contains(markCar)) {
+							localSelectedCars.add(markCar);
+						}
+					}
+					selectedCars = new ArrayList<>();
+					for (Car markCar : localSelectedCars) {
+						selectedCars.add(markCar);
+					}
+
+				} else {
+					for (Car markCar : markedCars) {
+						if (localCars.contains(markCar)) {
+							selectedCars.add(markCar);
+						}
+					}
+				}
 				return datasource;
 			}
 
@@ -86,52 +109,43 @@ public class LazyController implements Serializable {
 		};
 	}
 
-	private List<Car> viewData() {
+	public void selectAll() {
+		notMarkedCars = new HashSet<>();
+		selectedCars = datasource;
+		markedCars = new HashSet<>(datasource);
+		selectAllFlag = true;
+	}
 
+	public void deSelectAll() {
 		selectedCars = new ArrayList<>();
-		markedCars = new ArrayList<>();
-		if (markedFlag) {
-			markedCars = datasource;
-			for (int i = 0; i < datasource.size(); i++) {
-				for (Car unMarkCar : notMarkedCars) {
-					if (datasource.get(i).getId().equals(unMarkCar.getId())) {
-						markedCars.remove(i);
-					}
-				}
-			}
-		}
-		return markedCars;
+		selectAllFlag = false;
+		markedCars = new HashSet<>();
 	}
 
 	public void select() {
-		notMarkedCars = new ArrayList<>();
-		selectedCars = datasource;
-		markedCars = datasource;
-		markedFlag = true;
-	}
 
-	public void deSelect() {
-		selectedCars = new ArrayList<>();
-		markedFlag = false;
-	}
-
-	public void mark() {
+		markedCars.addAll(selectedCars);
 		for (Car dataCar : datasource) {
+
 			if (!selectedCars.contains(dataCar)) {
 				notMarkedCars.add(dataCar);
 			}
+
 			if (selectedCars.contains(dataCar) && notMarkedCars.contains(dataCar)) {
 				notMarkedCars.remove(dataCar);
 			}
 		}
-		LOGGER.info("Mark is put");
 
 	}
 
-	public void unMark() {
+	public void unSelect() {
+
 		for (Car dataCar : datasource) {
 			if (!selectedCars.contains(dataCar)) {
 				notMarkedCars.add(dataCar);
+				if (markedCars.contains(dataCar)) {
+					markedCars.remove(dataCar);
+				}
 			}
 		}
 		LOGGER.info("Mark is removed");

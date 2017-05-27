@@ -21,11 +21,11 @@
 			style="margin-bottom:0">
 
 
-			<p:ajax event="rowSelectCheckbox" listener="#{lazyController.mark}" />
-			<p:ajax event="rowUnselectCheckbox" listener="#{lazyController.unMark}" />
-			<p:ajax event="toggleSelect" listener="#{lazyController.mark}" />
+			<p:ajax event="rowSelectCheckbox" listener="#{lazyController.select}" />
+			<p:ajax event="rowUnselectCheckbox" listener="#{lazyController.unSelect}" />
+			<p:ajax event="toggleSelect" listener="#{lazyController.select}" />
 
-			<p:column selectionMode="multiple"
+			<p:column selectionMode="multiple" 
 				style="width:16px;text-align:center" />
 
 			<p:column headerText="Id" sortBy="#{car.id}" filterBy="#{car.id}">
@@ -70,10 +70,10 @@
 					icon="ui-icon-search" value="View single car"
 					oncomplete="PF('carDialog').show()" />
 				<p:commandButton process="carTable" update="carTable"
-					actionListener="#{lazyController.select}" icon="ui-icon-check"
+					actionListener="#{lazyController.selectAll}" icon="ui-icon-check"
 					value="Select all" />
 				<p:commandButton process="carTable" update="carTable"
-					actionListener="#{lazyController.deSelect}" icon="ui-icon-check"
+					actionListener="#{lazyController.deSelectAll}" icon="ui-icon-check"
 					value="Unselect all" />
 			</f:facet>
 		</p:dataTable>

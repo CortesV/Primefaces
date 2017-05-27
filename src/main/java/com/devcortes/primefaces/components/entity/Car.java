@@ -2,27 +2,14 @@ package com.devcortes.primefaces.components.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "car", catalog = "vechicle")
 public class Car implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	private String uuid;
 
-	@Column(name = "year_produce")
 	private Integer yearProduce;
 
 	private String brand;
@@ -111,22 +98,65 @@ public class Car implements Serializable {
 		this.price = price;
 	}
 
-	/*@Override
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((brand == null) ? 0 : brand.hashCode());
+		result = prime * result + ((color == null) ? 0 : color.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((model == null) ? 0 : model.hashCode());
+		result = prime * result + ((price == null) ? 0 : price.hashCode());
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		result = prime * result + ((yearProduce == null) ? 0 : yearProduce.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-
-		if (obj == this) {
+		if (this == obj)
 			return true;
-		}
-
-		if (!(obj instanceof Car)) {
+		if (obj == null)
 			return false;
-		}
-
+		if (getClass() != obj.getClass())
+			return false;
 		Car other = (Car) obj;
-
-		return id == other.getId() && uuid == other.getUuid() && yearProduce == other.getYearProduce()
-				&& brand == other.getBrand() && model == other.getModel() && color == other.getColor()
-				&& price == other.getPrice();
-	}*/
+		if (brand == null) {
+			if (other.brand != null)
+				return false;
+		} else if (!brand.equals(other.brand))
+			return false;
+		if (color == null) {
+			if (other.color != null)
+				return false;
+		} else if (!color.equals(other.color))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (model == null) {
+			if (other.model != null)
+				return false;
+		} else if (!model.equals(other.model))
+			return false;
+		if (price == null) {
+			if (other.price != null)
+				return false;
+		} else if (!price.equals(other.price))
+			return false;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		if (yearProduce == null) {
+			if (other.yearProduce != null)
+				return false;
+		} else if (!yearProduce.equals(other.yearProduce))
+			return false;
+		return true;
+	}
 
 }
