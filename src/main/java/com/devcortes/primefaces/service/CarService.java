@@ -24,9 +24,9 @@ public class CarService {
 		return iCar.getCars(limit, batch);
 	}
 
-	public void saveCar(Car car) {
+	public Integer saveCar(Car car) {
 
-		iCar.saveCar(car);
+		return iCar.saveCar(car);
 	}
 
 	public void updateCar(Integer id, Car car) {
