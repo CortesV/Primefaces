@@ -32,9 +32,9 @@ public class CarController {
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-	public void saveCar(@RequestBody Car car) {
+	public Integer saveCar(@RequestBody Car car) {
 
-		carService.saveCar(car);
+		return carService.saveCar(car);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = "application/json")

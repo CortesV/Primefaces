@@ -13,15 +13,29 @@
 
 	<h:form id="form">
 		<p:dataTable var="car" value="#{lazyController.lazyModel}"
-			paginator="true" rows="15"
+			paginator="true" rows="5"
 			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 			rowsPerPageTemplate="5,10,15"
 			selection="#{lazyController.selectedCars}" id="carTable" lazy="true"
-			paginatorPosition="bottom" rowKey="#{car.uuid}"
-			style="margin-bottom:0">
+			paginatorPosition="bottom" rowKey="#{car.id}" style="margin-bottom:0">
+
+
+
+			<p:ajax event="rowSelectCheckbox"
+				listener="#{lazyController.selectCheckbox}" />
+			<p:ajax event="rowUnselectCheckbox"
+				listener="#{lazyController.unSelectCheckbox}" />
+
+			<!-- <p:ajax event="rowSelect" listener="#{lazyController.selectRow}" />
+			<p:ajax event="rowUnselect" listener="#{lazyController.unSelectRow}" /> -->
+
+			<p:ajax event="toggleSelect"
+				listener="#{lazyController.toggleSelect}" />
+
 
 			<p:column selectionMode="multiple"
 				style="width:16px;text-align:center" />
+
 
 			<p:column headerText="Id" sortBy="#{car.id}" filterBy="#{car.id}">
 				<h:outputText value="#{car.id}" />
@@ -64,6 +78,12 @@
 				<p:commandButton process="carTable" update=":form:carDetail"
 					icon="ui-icon-search" value="View single car"
 					oncomplete="PF('carDialog').show()" />
+				<p:commandButton process="carTable" update="carTable"
+					actionListener="#{lazyController.selectAll}" icon="ui-icon-check"
+					value="Select all" />
+				<p:commandButton process="carTable" update="carTable"
+					actionListener="#{lazyController.deSelectAll}" icon="ui-icon-check"
+					value="Unselect all" />
 			</f:facet>
 		</p:dataTable>
 
@@ -114,6 +134,7 @@
 			</p:outputPanel>
 		</p:dialog>
 	</h:form>
+
 
 
 

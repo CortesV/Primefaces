@@ -12,7 +12,7 @@ public interface ICar {
 
 	public List<Car> getCars(Integer limit, Integer batch);
 
-	public void saveCar(Car car);
+	public Integer saveCar(Car car);
 
 	public void updateCar(Integer id, Car car);
 
