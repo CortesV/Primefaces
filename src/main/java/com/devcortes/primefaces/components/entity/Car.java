@@ -19,6 +19,7 @@ public class Car implements Serializable {
 	private String color;
 
 	private Integer price;
+	
 
 	public Car() {
 
@@ -32,6 +33,14 @@ public class Car implements Serializable {
 		this.model = model;
 		this.color = color;
 		this.price = price;
+	}
+
+	public void updateCar(Integer yearProduce, String brand, String model, String color) {
+
+		this.yearProduce = yearProduce;
+		this.brand = brand;
+		this.model = model;
+		this.color = color;
 	}
 
 	public Integer getId() {
@@ -79,14 +88,6 @@ public class Car implements Serializable {
 	}
 
 	public void setColor(String color) {
-		this.color = color;
-	}
-
-	public void updateCar(Integer yearProduce, String brand, String model, String color) {
-
-		this.yearProduce = yearProduce;
-		this.brand = brand;
-		this.model = model;
 		this.color = color;
 	}
 
@@ -158,5 +159,4 @@ public class Car implements Serializable {
 			return false;
 		return true;
 	}
-
 }
