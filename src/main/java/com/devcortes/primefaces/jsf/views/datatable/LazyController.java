@@ -1,10 +1,8 @@
 package com.devcortes.primefaces.jsf.views.datatable;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +10,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.devcortes.primefaces.components.entity.Car;
 import com.devcortes.primefaces.service.CarService;
+import com.devcortes.primefaces.service.FilterDataService;
 
 @RestController
 @ViewScoped
@@ -33,23 +31,23 @@ public class LazyController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger.getLogger(LazyController.class);
+	private static final String MARK_ADDED = "Mark is added. Id = ";
+	private static final String MARK_REMOVED = "Mark is removed. Id = ";
 
-	@ManagedProperty("#{carService}")
 	@Autowired
 	private transient CarService carService;
+
+	@Autowired
+	private transient FilterDataService filterDataService;
 
 	private LazyDataModel<Car> lazyModel;
 	private List<Car> datasource;
 	private List<Car> selectedCars;
-	private Set<Car> selectedCarsHelp;
-	private Set<Car> markedCars;
-	private Set<Car> notMarkedCars;
+	private Set<Integer> markedCars;
 	private boolean selectAllFlag;
 
 	public LazyController() {
 		markedCars = new HashSet<>();
-		notMarkedCars = new HashSet<>();
-		selectedCarsHelp = new HashSet<>();
 		selectedCars = new ArrayList<>();
 	}
 
@@ -64,91 +62,104 @@ public class LazyController implements Serializable {
 			public List<Car> load(int first, int pageSize, String sortField, SortOrder sortOrder,
 					Map<String, Object> filters) {
 
-				setRowCount(carService.getTotalRegistors().intValue());				
-				int page = carService.getTotalRegistors().intValue()/pageSize - (carService.getTotalRegistors().intValue() - (first + pageSize))/pageSize;
+				setRowCount(carService.getTotalRegistors().intValue());
+				int page = carService.getTotalRegistors().intValue() / pageSize
+						- (carService.getTotalRegistors().intValue() - (first + pageSize)) / pageSize;
 				datasource = carService.load(pageSize, page, sortField, SortOrder.ASCENDING.equals(sortOrder));
-				datasource = filter(first, pageSize, filters);
+				datasource = filterDataService.filter(first, pageSize, filters, datasource);
 
-				Set<Car> localCars = new HashSet<>(datasource);
-				Set<Car> localSelectedCars = new HashSet<>();
 				if (selectAllFlag) {
-					selectedCars = datasource;
-					selectedCarsHelp = new HashSet<>(datasource);
-					
-					
-					for (Car markCar : localCars) {
-						if (!notMarkedCars.contains(markCar)) {
-							localSelectedCars.add(markCar);
+					for (Car datasourceCar : datasource) {
+						if (!markedCars.contains(datasourceCar.getId())) {
+							selectedCars.add(datasourceCar);
 						}
 					}
-					selectedCars = new ArrayList<>();
-					for (Car markCar : localSelectedCars) {
-						selectedCars.add(markCar);
-					}
-
 				} else {
-					for (Car markCar : markedCars) {
-						if (localCars.contains(markCar)) {
-							selectedCars.add(markCar);
+					for (Car datasourceCar : datasource) {
+						if (markedCars.contains(datasourceCar.getId())) {
+							selectedCars.add(datasourceCar);
 						}
 					}
 				}
+
 				return datasource;
 			}
 
 			@Override
 			public Car getRowData(String rowKey) {
-				return datasource.stream().filter(car -> Optional.of(car).isPresent() && car.getUuid().equals(rowKey))
+				return datasource.stream()
+						.filter(car -> Optional.of(car).isPresent() && car.getId().toString().equals(rowKey))
 						.findFirst().orElse(null);
 			}
 
 			@Override
 			public Object getRowKey(Car car) {
-				return Optional.of(car).map(Car::getUuid).orElse(null);
+				return Optional.of(car).map(Car::getId).orElse(null);
 			}
 		};
 	}
 
 	public void selectAll() {
-		notMarkedCars = new HashSet<>();
-		selectedCars = datasource;
-		markedCars = new HashSet<>(datasource);
+		markedCars = new HashSet<>();
 		selectAllFlag = true;
+		datasource.stream().forEach(datasourceCar -> {
+			selectedCars.add(datasourceCar);
+		});
 	}
 
 	public void deSelectAll() {
 		selectedCars = new ArrayList<>();
-		selectAllFlag = false;
 		markedCars = new HashSet<>();
+		selectAllFlag = false;
 	}
 
-	public void select() {
+	public void selectCheckbox(SelectEvent event) {
+		Integer idNewCar = ((Car) event.getObject()).getId();
+		markedCars.add(idNewCar);
+		LOGGER.info(MARK_ADDED + idNewCar);
+	}
 
-		markedCars.addAll(selectedCars);
-		for (Car dataCar : datasource) {
-
-			if (!selectedCars.contains(dataCar)) {
-				notMarkedCars.add(dataCar);
-			}
-
-			if (selectedCars.contains(dataCar) && notMarkedCars.contains(dataCar)) {
-				notMarkedCars.remove(dataCar);
-			}
+	public void unSelectCheckbox(UnselectEvent event) {
+		Integer idCar = ((Car) event.getObject()).getId();
+		if (selectAllFlag) {
+			markedCars.add(idCar);
+			LOGGER.info(MARK_ADDED + idCar);
+		} else {
+			markedCars.remove(idCar);
+			LOGGER.info(MARK_REMOVED + idCar);
 		}
 
 	}
 
-	public void unSelect() {
+	public void selectRow(SelectEvent event) {
+		selectCheckbox(event);
+	}
 
-		for (Car dataCar : datasource) {
-			if (!selectedCars.contains(dataCar)) {
-				notMarkedCars.add(dataCar);
-				if (markedCars.contains(dataCar)) {
-					markedCars.remove(dataCar);
-				}
+	public void unSelectRow(UnselectEvent event) {
+		unSelectCheckbox(event);
+	}
+
+	public void toggleSelect() {
+		datasource.stream().forEach(dataCar -> {
+			if (selectAllFlag) {
+				markedCars.add(dataCar.getId());
+				LOGGER.info(MARK_REMOVED + dataCar.getId());
+			} else {
+				markedCars.add(dataCar.getId());
+				LOGGER.info(MARK_ADDED + dataCar.getId());
 			}
-		}
-		LOGGER.info("Mark is removed");
+		});
+	}
+
+	public void onRowSelect(SelectEvent event) {
+
+		FacesMessage msg = new FacesMessage("Car Selected", ((Car) event.getObject()).getId().toString());
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	public void onRowUnselect(UnselectEvent event) {
+		FacesMessage msg = new FacesMessage("Car Unselected", ((Car) event.getObject()).getId().toString());
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public LazyDataModel<Car> getLazyModel() {
@@ -169,59 +180,6 @@ public class LazyController implements Serializable {
 	public void setService(CarService service) {
 
 		this.carService = service;
-	}
-
-	public void onRowSelect(SelectEvent event) {
-
-		FacesMessage msg = new FacesMessage("Car Selected", ((Car) event.getObject()).getUuid());
-		FacesContext.getCurrentInstance().addMessage(null, msg);
-	}
-
-	public void onRowUnselect(UnselectEvent event) {
-		FacesMessage msg = new FacesMessage("Car Unselected", ((Car) event.getObject()).getUuid());
-		FacesContext.getCurrentInstance().addMessage(null, msg);
-	}
-
-	public List<Car> filter(int first, int pageSize, Map<String, Object> filters) {
-
-		List<Car> data = new ArrayList<>();
-		for (Car car : datasource) {
-			boolean match = true;
-			if (filters != null) {
-				for (Iterator<String> it = filters.keySet().iterator(); it.hasNext();) {
-					try {
-						String filterProperty = it.next();
-						Object filterValue = filters.get(filterProperty);
-						Field field = car.getClass().getDeclaredField(filterProperty);
-						field.setAccessible(true);
-						String fieldValue = String.valueOf(field.get(car));
-
-						if (filterValue == null || fieldValue.startsWith(filterValue.toString())) {
-							match = true;
-						} else {
-							match = false;
-							break;
-						}
-					} catch (Exception e) {
-						match = false;
-					}
-				}
-			}
-			if (match) {
-				data.add(car);
-			}
-		}
-		int dataSize = data.size();
-		// paginate
-		if (dataSize > pageSize) {
-			try {
-				return data.subList(first, first + pageSize);
-			} catch (IndexOutOfBoundsException e) {
-				return data.subList(first, first + (dataSize % pageSize));
-			}
-		} else {
-			return data;
-		}
 	}
 
 }

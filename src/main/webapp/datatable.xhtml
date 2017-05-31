@@ -17,16 +17,25 @@
 			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 			rowsPerPageTemplate="5,10,15"
 			selection="#{lazyController.selectedCars}" id="carTable" lazy="true"
-			paginatorPosition="bottom" rowKey="#{car.uuid}"
-			style="margin-bottom:0">
+			paginatorPosition="bottom" rowKey="#{car.id}" style="margin-bottom:0">
 
 
-			<p:ajax event="rowSelectCheckbox" listener="#{lazyController.select}" />
-			<p:ajax event="rowUnselectCheckbox" listener="#{lazyController.unSelect}" />
-			<p:ajax event="toggleSelect" listener="#{lazyController.select}" />
 
-			<p:column selectionMode="multiple" 
+			<p:ajax event="rowSelectCheckbox"
+				listener="#{lazyController.selectCheckbox}" />
+			<p:ajax event="rowUnselectCheckbox"
+				listener="#{lazyController.unSelectCheckbox}" />
+
+			<!-- <p:ajax event="rowSelect" listener="#{lazyController.selectRow}" />
+			<p:ajax event="rowUnselect" listener="#{lazyController.unSelectRow}" /> -->
+
+			<p:ajax event="toggleSelect"
+				listener="#{lazyController.toggleSelect}" />
+
+
+			<p:column selectionMode="multiple"
 				style="width:16px;text-align:center" />
+
 
 			<p:column headerText="Id" sortBy="#{car.id}" filterBy="#{car.id}">
 				<h:outputText value="#{car.id}" />
