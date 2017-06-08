@@ -29,8 +29,8 @@ public class CarDao implements ICar {
 	private final static String SQL_GET_AND_ORDER_CARS_FIRST_PART = "SELECT * FROM car ORDER BY car.";
 	private final static String SQL_GET_AND_ORDER_CARS_SECOND_PART = " LIMIT ? OFFSET ?";
 	private final static String SQL_FOR_GETTING_CAR_BY_ID = "SELECT * FROM car  WHERE car.id = ? AND car.delete = 0";
-	private final static String SQL_SAVE_CAR = "INSERT INTO car (uuid, yearProduce, brand, model, color, price) VALUES(?, ?, ?, ?, ?, ?)";
-	private static final String UPDATE_CAR = "UPDATE car SET yearProduce = ?, brand = ?, model = ?, color = ?, price = ? WHERE id = ?";
+	private final static String SQL_SAVE_CAR = "INSERT INTO car (uuid, year_produce, brand, model, color, price) VALUES(?, ?, ?, ?, ?, ?)";
+	private static final String UPDATE_CAR = "UPDATE car SET year_produce = ?, brand = ?, model = ?, color = ?, price = ? WHERE id = ?";
 	private static final String DELETE_CAR = "UPDATE car as c SET c.`delete` = '1' WHERE c.id = ?";
 	private static final String DESC = "DESC";
 	private static final String ASC = "ASC";
@@ -94,9 +94,9 @@ public class CarDao implements ICar {
 				preparedStatement.setString(1, UUID.randomUUID().toString());
 				preparedStatement.setInt(2, car.getYearProduce());
 				preparedStatement.setString(3, car.getBrand());
-				preparedStatement.setString(1, car.getModel());
-				preparedStatement.setString(2, car.getColor());
-				preparedStatement.setInt(3, car.getPrice());
+				preparedStatement.setString(4, car.getModel());
+				preparedStatement.setString(5, car.getColor());
+				preparedStatement.setInt(6, car.getPrice());
 				return preparedStatement;
 			}
 		}, holder);
@@ -116,7 +116,7 @@ public class CarDao implements ICar {
 
 	@Override
 	public void generateCars() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 200; i++) {
 			Car randomCar = new Car(getRandomId(), getRandomYear(), getRandomBrand(), getRandomModel(),
 					getRandomColor(), getRandomPrice());
 			saveCar(randomCar);
